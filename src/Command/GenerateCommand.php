@@ -5,8 +5,8 @@ namespace Boesing\Laminas\Migration\PhpStorm\Command;
 
 use Boesing\Laminas\Migration\PhpStorm\Service\LaminasFileFinder;
 use Boesing\Laminas\Migration\PhpStorm\Service\MetadataGenerator;
-use Generator;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function file_put_contents;
@@ -35,6 +35,14 @@ final class GenerateCommand extends Command
         $this->finder = $finder;
         $this->generator = $generator;
         parent::__construct(self::$defaultName);
+    }
+
+    protected function configure()
+    {
+        $this
+            // ...
+            ->addArgument('pathToVendor', InputArgument::REQUIRED, 'Path to the composer vendor/ directory.')
+            ->addArgument('output', InputArgument::OPTIONAL, 'Path where to store the generate phpstorm.meta.php');
     }
 
     /**
