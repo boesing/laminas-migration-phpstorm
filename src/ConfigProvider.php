@@ -26,6 +26,7 @@ final class ConfigProvider
     {
         return [
             'dependencies' => $this->getServiceDependencies(),
+            'laminas-cli' => $this->laminasCliConfiguration(),
         ];
     }
 
@@ -50,6 +51,15 @@ final class ConfigProvider
                 LaminasToZendNamespaceConverterInterface::class => LaminasToZendNamespaceConverter::class,
                 ReflectorInterface::class => Reflector::class,
                 ComposerJsonParserInterface::class => ComposerJsonParser::class,
+            ],
+        ];
+    }
+
+    private function laminasCliConfiguration(): array
+    {
+        return [
+            'commands' => [
+                'migration:phpstorm-extended-meta' => GenerateCommand::class,
             ],
         ];
     }
