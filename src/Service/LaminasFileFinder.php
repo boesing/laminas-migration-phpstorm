@@ -55,6 +55,10 @@ final class LaminasFileFinder
         $phpFileFinder = new Finder();
         $phpFileFinder->name('*.php');
 
+        if ($composerJsonFinder->count() === 0) {
+            return [];
+        }
+
         foreach ($composerJsonFinder->files() as $composerJson) {
             $directories = $this->parser->parse($composerJson);
             if (!$directories) {
