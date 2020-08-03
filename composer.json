@@ -1,0 +1,30 @@
+{
+    "name": "boesing/laminas-migration-phpstorm",
+    "description": "PHPStorm META informations to work with already migrated projects/libraries without losing autocompletion",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.3",
+        "laminas/laminas-cli": "^0.1.3",
+        "roave/better-reflection": "^4.3",
+        "nikic/php-parser": "^4.6",
+        "symfony/finder": "^5.1",
+        "laminas/laminas-zendframework-bridge": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Boesing\\Laminas\\Migration\\PhpStorm\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Boesing\\Laminas\\Migration\\PhpStorm\\Test\\": "test/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.2",
+        "vimeo/psalm": "^3.13"
+    }
+}
