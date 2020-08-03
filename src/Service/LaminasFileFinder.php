@@ -7,6 +7,7 @@ use Boesing\Laminas\Migration\PhpStorm\Service\LaminasFileFinder\ComposerJsonPar
 use Boesing\Laminas\Migration\PhpStorm\Service\LaminasFileFinder\File;
 use Boesing\Laminas\Migration\PhpStorm\Service\Reflector\ReflectorInterface;
 use Symfony\Component\Finder\Finder;
+use function is_dir;
 
 final class LaminasFileFinder
 {
@@ -31,17 +32,12 @@ final class LaminasFileFinder
      */
     private $laminasToZendNamespaceConverter;
 
-    /**
-     * @var ComposerJsonParserInterface
-     */
-    private $composerJsonParser;
-
     public function __construct(
         ComposerJsonParserInterface $composerJsonParser,
         ReflectorInterface $reflector,
         LaminasToZendNamespaceConverterInterface $laminasToZendNamespaceConverter
     ) {
-        $this->composerJsonParser = $composerJsonParser;
+        $this->parser = $composerJsonParser;
         $this->reflector = $reflector;
         $this->laminasToZendNamespaceConverter = $laminasToZendNamespaceConverter;
     }
@@ -97,6 +93,7 @@ final class LaminasFileFinder
         $finder
             ->ignoreDotFiles(true)
             ->ignoreVCS(true)
+            ->ignoreUnreadableDirs(true)
             ->in($this->directories($vendor))
             ->name('composer.json');
 
@@ -113,7 +110,12 @@ final class LaminasFileFinder
         $directories = [];
 
         foreach (self::VENDORS as $projectVendor) {
-            $directories[] = sprintf('%s/%s', $vendorRootDirectory, $projectVendor);
+            $directory = sprintf('%s/%s', $vendorRootDirectory, $projectVendor);
+            if (!is_dir($directory)) {
+                continue;
+            }
+
+            $directories[] = $directory;
         }
 
         return $directories;
