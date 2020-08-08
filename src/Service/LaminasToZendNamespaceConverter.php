@@ -6,10 +6,7 @@ namespace Boesing\Laminas\Migration\PhpStorm\Service;
 use InvalidArgumentException;
 use Laminas\ZendFrameworkBridge\RewriteRules;
 use function array_flip;
-use function class_exists;
-use function interface_exists;
 use function strtr;
-use function trait_exists;
 
 final class LaminasToZendNamespaceConverter implements LaminasToZendNamespaceConverterInterface
 {
@@ -55,6 +52,7 @@ final class LaminasToZendNamespaceConverter implements LaminasToZendNamespaceCon
             );
         }
 
+        /** @var class-string|trait-string $legacy */
         $legacy = $namespaces[$check]
             . strtr(substr($className, strlen($check)), [
                 'ApiTools' => 'Apigility',
@@ -63,11 +61,6 @@ final class LaminasToZendNamespaceConverter implements LaminasToZendNamespaceCon
             ]);
 
         if ($legacy !== $className) {
-            assert(
-                class_exists($legacy, true)
-                || trait_exists($legacy, true)
-                || interface_exists($legacy, true)
-            );
             return $legacy;
         }
 
