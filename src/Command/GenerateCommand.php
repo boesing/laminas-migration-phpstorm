@@ -9,13 +9,16 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use function dirname;
 use function file_put_contents;
 use function is_string;
+use function is_writable;
 
 final class GenerateCommand extends Command
 {
     private const EXIT_CODE_MISSING_VENDOR = 1;
-    private const EXIT_CODE_NOTHING_TODO = 2;
+    private const EXIT_CODE_CANNOT_WRITE_OUTPUT = 2;
+    private const EXIT_CODE_NOTHING_TODO = 3;
 
     /**
      * @var string
@@ -47,7 +50,7 @@ final class GenerateCommand extends Command
         $this
             // ...
             ->addArgument('pathToVendor', InputArgument::REQUIRED, 'Path to the composer vendor/ directory.')
-            ->addArgument('output', InputArgument::OPTIONAL, 'Path where to store the generate phpstorm.meta.php');
+            ->addArgument('output', InputArgument::REQUIRED, 'Path where to store the generate phpstorm.meta.php');
     }
 
     /**
@@ -63,6 +66,17 @@ final class GenerateCommand extends Command
             return self::EXIT_CODE_MISSING_VENDOR;
         }
 
+        /** @var string $outputFile */
+        $outputFile = $input->getArgument('output');
+        if(!is_writable($outputFile) && !is_writable(dirname($outputFile))) {
+            $output->writeln(sprintf(
+                '<error>Cannot write %s. Please check if the path exists and create directories by yourself.</error>',
+                $outputFile
+            ));
+
+            return self::EXIT_CODE_CANNOT_WRITE_OUTPUT;
+        }
+
         $laminasFiles = $this->finder->find($vendorDirectory);
 
         if (!$laminasFiles) {
@@ -76,14 +90,7 @@ final class GenerateCommand extends Command
 
         $metadata = $this->generator->generateMetadata($laminasFiles);
 
-        $out = $input->getArgument('output');
-        if (!is_string($out)) {
-            $output->writeln($metadata->toString());
-
-            return 0;
-        }
-
-        file_put_contents($out, $metadata->toString());
+        file_put_contents($outputFile, $metadata->toString());
 
         return 0;
     }
