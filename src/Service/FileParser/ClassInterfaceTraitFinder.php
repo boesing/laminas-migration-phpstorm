@@ -56,9 +56,13 @@ final class ClassInterfaceTraitFinder implements ClassInterfaceTraitFinderInterf
             assert($node instanceof Node\Stmt\ClassLike);
             /**
              * @psalm-suppress UndefinedPropertyFetch
-             * @var Node\Name $namespacedName
+             * @var Node\Name|null $namespacedName
              */
-            $namespacedName = $node->namespacedName;
+            $namespacedName = $node->namespacedName ?? null;
+            if (!$namespacedName instanceof Node\Name) {
+                continue;
+            }
+
             /** @var class-string|trait-string $classInterfaceOrTrait */
             $classInterfaceOrTrait = $namespacedName->__toString();
 
