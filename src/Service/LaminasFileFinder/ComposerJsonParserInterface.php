@@ -12,7 +12,7 @@ interface ComposerJsonParserInterface
      * Returns a list of directories to scan for interfaces, classes and traits.
      * Should only return directories if the `composer.json` replaces a zend package.
      *
-     * @return array<int,string>
+     * @psalm-return list<string>
      */
     public function parse(SplFileInfo $composerJson): array;
 }

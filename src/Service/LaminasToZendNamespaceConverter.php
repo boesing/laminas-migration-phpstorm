@@ -19,7 +19,7 @@ final class LaminasToZendNamespaceConverter implements LaminasToZendNamespaceCon
 {
     public function convertToZendNamespace(string $className): string
     {
-        /** @var array<string,string> $namespaces */
+        /** @psalm-var array<string,string> $namespaces */
         $namespaces = RewriteRules::namespaceReverse();
         $converted  = $this->convert($className, array_replace(
             $namespaces,
@@ -30,15 +30,15 @@ final class LaminasToZendNamespaceConverter implements LaminasToZendNamespaceCon
             return $converted;
         }
 
-        /** @var array<string,string> $rewrites */
+        /** @psalm-var array<string,string> $rewrites */
         $rewrites = RewriteRules::namespaceRewrite();
 
         return $this->convert($className, array_flip($rewrites));
     }
 
     /**
-     * @param array<string,string> $namespaces
-     * @return class-string|trait-string
+     * @psalm-param array<string,string> $namespaces
+     * @psalm-return class-string|trait-string
      * @throws InvalidArgumentException If the className could not be converted.
      */
     private function convert(string $className, array $namespaces): string
@@ -59,7 +59,7 @@ final class LaminasToZendNamespaceConverter implements LaminasToZendNamespaceCon
             );
         }
 
-        /** @var class-string|trait-string $legacy */
+        /** @psalm-var class-string|trait-string $legacy */
         $legacy = $namespaces[$check]
             . strtr(substr($className, strlen($check)), [
                 'ApiTools' => 'Apigility',

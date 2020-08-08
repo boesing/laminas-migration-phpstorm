@@ -9,14 +9,14 @@ use function sprintf;
 
 final class File
 {
-    /** @var class-string|trait-string */
+    /** @psalm-var class-string|trait-string */
     public $laminas;
 
     /** @var string */
     public $zend;
 
     /**
-     * @param class-string|trait-string $laminas
+     * @psalm-param class-string|trait-string $laminas
      */
     private function __construct(string $laminas, string $zend)
     {
@@ -25,7 +25,7 @@ final class File
     }
 
     /**
-     * @param class-string|trait-string $laminas
+     * @psalm-param class-string|trait-string $laminas
      */
     public static function create(string $laminas, string $zend): self
     {

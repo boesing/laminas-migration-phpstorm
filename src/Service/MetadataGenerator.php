@@ -11,14 +11,18 @@ use function sprintf;
 final class MetadataGenerator
 {
     /**
-     * @param array<int,LaminasFileFinder\File> $laminasFiles
+     * @param LaminasFileFinder\File[] $laminasFiles
      * @psalm-param list<LaminasFileFinder\File> $laminasFiles
      */
     public function generateMetadata(array $laminasFiles): Metadata
     {
         $metadata = Metadata::create();
         foreach ($laminasFiles as $file) {
-            $metadata = $metadata->withAlias(sprintf('class_alias(%s::class, %s::class);', $file->laminas, $file->zend));
+            $metadata = $metadata->withAlias(sprintf(
+                'class_alias(%s::class, %s::class);',
+                $file->laminas,
+                $file->zend
+            ));
         }
 
         return $metadata;

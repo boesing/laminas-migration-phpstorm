@@ -26,9 +26,6 @@ final class ComposerJsonParser implements ComposerJsonParserInterface
     ];
     private const AUTOLOAD_TYPES = ['psr-0', 'psr-4'];
 
-    /**
-     * @psalm-return list<string>
-     */
     public function parse(SplFileInfo $composerJson): array
     {
         /**
@@ -80,7 +77,7 @@ final class ComposerJsonParser implements ComposerJsonParserInterface
     }
 
     /**
-     * @param array<string,string> $replaces
+     * @psalm-param array<string,string> $replaces
      */
     private function packageReplacesZendPackage(array $replaces): bool
     {

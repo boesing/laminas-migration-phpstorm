@@ -64,7 +64,7 @@ final class ClassInterfaceTraitFinder implements ClassInterfaceTraitFinderInterf
                 continue;
             }
 
-            /** @var class-string|trait-string $classInterfaceOrTrait */
+            /** @psalm-var class-string|trait-string $classInterfaceOrTrait */
             $classInterfaceOrTrait = $namespacedName->__toString();
 
             $reflections[] = $classInterfaceOrTrait;
