@@ -10,9 +10,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function dirname;
+use function extension_loaded;
 use function file_put_contents;
+use function ini_set;
 use function is_string;
 use function is_writable;
+use const PHP_INT_MAX;
 
 final class GenerateCommand extends Command
 {
@@ -35,11 +38,17 @@ final class GenerateCommand extends Command
      */
     private $generator;
 
+    /**
+     * @var bool
+     */
+    private $xdebugLoaded;
+
     public function __construct(LaminasFileFinder $finder, MetadataGenerator $generator)
     {
         $this->finder = $finder;
         $this->generator = $generator;
         parent::__construct(self::$defaultName);
+        $this->xdebugLoaded = extension_loaded('xdebug');
     }
 
     /**
@@ -47,6 +56,10 @@ final class GenerateCommand extends Command
      */
     protected function configure()
     {
+        if ($this->xdebugLoaded) {
+            ini_set('xdebug.max_nesting_level', (string) PHP_INT_MAX);
+        }
+
         $this
             // ...
             ->addArgument('pathToVendor', InputArgument::REQUIRED, 'Path to the composer vendor/ directory.')
@@ -58,6 +71,14 @@ final class GenerateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if ($this->xdebugLoaded) {
+            $output->writeln(sprintf(
+                '<comment>You are running "%s" with xdebug enabled.'
+                . ' This is not recommended as it may consume too many resources.</comment>',
+                self::$defaultName
+            ));
+        }
+
         $vendorDirectory = $input->getArgument('pathToVendor');
         assert(is_string($vendorDirectory));
         if ($vendorDirectory === '') {
@@ -91,6 +112,7 @@ final class GenerateCommand extends Command
         $metadata = $this->generator->generateMetadata($laminasFiles);
 
         file_put_contents($outputFile, $metadata->toString());
+        $output->writeln(sprintf('<info>Done. Generated metadata in %s</info>', $outputFile));
 
         return 0;
     }
