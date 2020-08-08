@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="3.13.1@afd8874a9e4562eac42a02de90e42e430c3a1db1">
+  <file src="src/Command/GenerateCommandFactory.php">
+    <MixedArgument occurrences="2">
+      <code>$container-&gt;get(LaminasFileFinder::class)</code>
+      <code>$container-&gt;get(MetadataGenerator::class)</code>
+    </MixedArgument>
+  </file>
+  <file src="src/Service/LaminasFileFinderFactory.php">
+    <MixedArgument occurrences="3">
+      <code>$container-&gt;get(ComposerJsonParserInterface::class)</code>
+      <code>$container-&gt;get(ClassInterfaceTraitFinderInterface::class)</code>
+      <code>$container-&gt;get(LaminasToZendNamespaceConverterInterface::class)</code>
+    </MixedArgument>
+  </file>
+</files>

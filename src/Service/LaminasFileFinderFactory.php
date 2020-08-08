@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm\Service;
 
+use Boesing\Laminas\Migration\PhpStorm\Service\FileParser\ClassInterfaceTraitFinderInterface;
 use Boesing\Laminas\Migration\PhpStorm\Service\LaminasFileFinder\ComposerJsonParserInterface;
-use Boesing\Laminas\Migration\PhpStorm\Service\Reflector\ReflectorInterface;
 use Psr\Container\ContainerInterface;
 
 final class LaminasFileFinderFactory
@@ -13,7 +13,7 @@ final class LaminasFileFinderFactory
     {
         return new LaminasFileFinder(
             $container->get(ComposerJsonParserInterface::class),
-            $container->get(ReflectorInterface::class),
+            $container->get(ClassInterfaceTraitFinderInterface::class),
             $container->get(LaminasToZendNamespaceConverterInterface::class)
         );
     }

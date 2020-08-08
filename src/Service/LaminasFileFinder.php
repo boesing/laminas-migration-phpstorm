@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm\Service;
 
+use Boesing\Laminas\Migration\PhpStorm\Service\FileParser\ClassInterfaceTraitFinderInterface;
 use Boesing\Laminas\Migration\PhpStorm\Service\LaminasFileFinder\ComposerJsonParserInterface;
 use Boesing\Laminas\Migration\PhpStorm\Service\LaminasFileFinder\File;
-use Boesing\Laminas\Migration\PhpStorm\Service\Reflector\ReflectorInterface;
+use InvalidArgumentException;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use function is_dir;
+use function is_string;
 
 final class LaminasFileFinder
 {
@@ -23,9 +26,9 @@ final class LaminasFileFinder
     private $parser;
 
     /**
-     * @var ReflectorInterface
+     * @var ClassInterfaceTraitFinderInterface
      */
-    private $reflector;
+    private $classInterfaceTraitFinder;
 
     /**
      * @var LaminasToZendNamespaceConverterInterface
@@ -34,16 +37,16 @@ final class LaminasFileFinder
 
     public function __construct(
         ComposerJsonParserInterface $composerJsonParser,
-        ReflectorInterface $reflector,
+        ClassInterfaceTraitFinderInterface $classInterfaceTraitFinder,
         LaminasToZendNamespaceConverterInterface $laminasToZendNamespaceConverter
     ) {
         $this->parser = $composerJsonParser;
-        $this->reflector = $reflector;
+        $this->classInterfaceTraitFinder = $classInterfaceTraitFinder;
         $this->laminasToZendNamespaceConverter = $laminasToZendNamespaceConverter;
     }
 
     /**
-     * @param string $vendor
+     * @psalm-param non-empty-string $vendor
      *
      * @return File[]
      *
@@ -55,34 +58,43 @@ final class LaminasFileFinder
         $phpFileFinder = new Finder();
         $phpFileFinder->name('*.php');
 
-        if ($composerJsonFinder->count() === 0) {
-            return [];
-        }
-
+        $found = false;
         foreach ($composerJsonFinder->files() as $composerJson) {
+            assert($composerJson instanceof SplFileInfo);
             $directories = $this->parser->parse($composerJson);
             if (!$directories) {
                 continue;
             }
 
             $phpFileFinder->in($directories);
+            $found = true;
+        }
+
+        if (!$found) {
+            return [];
         }
 
         $files = [];
         foreach ($phpFileFinder->files() as $phpFile) {
-            $reflections = $this->reflector->reflect($phpFile->getRealPath());
+            assert($phpFile instanceof SplFileInfo);
+            $fileName = $phpFile->getRealPath();
+            if (!$fileName) {
+                continue;
+            }
 
-            foreach ($reflections as $reflection) {
-                $zend = $this->laminasToZendNamespaceConverter->convertToZendNamespace(
-                    $reflection->getName()
-                );
+            $findings = $this->classInterfaceTraitFinder->find($fileName);
 
-                if (!$zend) {
+            foreach ($findings as $classInterfaceOrTrait) {
+                try {
+                    $zend = $this->laminasToZendNamespaceConverter->convertToZendNamespace(
+                        $classInterfaceOrTrait
+                    );
+                } catch (InvalidArgumentException $exception) {
                     continue;
                 }
 
                 $files[] = File::create(
-                    $reflection->getName(),
+                    $classInterfaceOrTrait,
                     $zend
                 );
             }
@@ -91,6 +103,9 @@ final class LaminasFileFinder
         return $files;
     }
 
+    /**
+     * @psalm-param non-empty-string $vendor
+     */
     private function createComposerJsonFinder(string $vendor): Finder
     {
         $finder = new Finder();
@@ -105,9 +120,8 @@ final class LaminasFileFinder
     }
 
     /**
-     * @return string[]
-     *
-     * @psalm-return non-empty-list<string>
+     * @psalm-param non-empty-string $vendorRootDirectory
+     * @psalm-return list<string>
      */
     private function directories(string $vendorRootDirectory): array
     {

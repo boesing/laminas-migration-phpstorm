@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm;
 
+use DateTimeImmutable;
 use DateTimeInterface;
 use function implode;
 use function sprintf;
@@ -10,11 +11,14 @@ use function sprintf;
 final class Metadata
 {
     private const TEMPLATE = <<<EOT
+<?php
+declare(strict_types=1);
+
 /**
- * This file is dynamically created on %s.
+ * This file was dynamically created on %s.
  * Please re-run `vendor/bin/laminas migration:phpstorm-extended-meta` if you want to update this. 
  */
- namespace PHPSTORM_META {
+namespace PHPSTORM_META {
     %s
 }
 EOT;
@@ -35,7 +39,7 @@ EOT;
 
     public function withAlias(string $alias): self
     {
-        $instance = new self;
+        $instance = clone $this;
         $instance->aliases[] = $alias;
 
         return $instance;
@@ -43,6 +47,10 @@ EOT;
 
     public function toString(): string
     {
-        return sprintf(self::TEMPLATE, date(DateTimeInterface::ATOM), implode("\n", $this->aliases));
+        return sprintf(
+            self::TEMPLATE,
+            (new DateTimeImmutable())->format(DateTimeInterface::RFC3339),
+            implode("\n", $this->aliases)
+        );
     }
 }

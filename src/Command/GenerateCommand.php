@@ -10,10 +10,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function file_put_contents;
+use function is_string;
 
 final class GenerateCommand extends Command
 {
-    private const EXIT_CODE_NOTHING_TODO = 1;
+    private const EXIT_CODE_MISSING_VENDOR = 1;
+    private const EXIT_CODE_NOTHING_TODO = 2;
 
     /**
      * @var string
@@ -37,6 +39,9 @@ final class GenerateCommand extends Command
         parent::__construct(self::$defaultName);
     }
 
+    /**
+     * @return void
+     */
     protected function configure()
     {
         $this
@@ -46,17 +51,23 @@ final class GenerateCommand extends Command
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $vendorDirectory = $input->getArgument('pathToVendor');
+        assert(is_string($vendorDirectory));
+        if ($vendorDirectory === '') {
+            $output->writeln('<error>Missing path to vendor directory!</error>');
+
+            return self::EXIT_CODE_MISSING_VENDOR;
+        }
 
         $laminasFiles = $this->finder->find($vendorDirectory);
 
         if (!$laminasFiles) {
             $output->writeln(sprintf(
-                'There are no files available in "%s" which needs to be aliased.',
+                '<info>There are no files available in "%s" which needs to be aliased.</info>',
                 $vendorDirectory
             ));
 
@@ -66,8 +77,9 @@ final class GenerateCommand extends Command
         $metadata = $this->generator->generateMetadata($laminasFiles);
 
         $out = $input->getArgument('output');
-        if (!$out) {
+        if (!is_string($out)) {
             $output->writeln($metadata->toString());
+
             return 0;
         }
 
