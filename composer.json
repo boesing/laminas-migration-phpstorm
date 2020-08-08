@@ -19,7 +19,8 @@
     },
     "extra": {
         "laminas": {
-            "config-provider": "Boesing\\Laminas\\Migration\\PhpStorm"
+            "module": "Boesing\\Laminas\\Migration\\PhpStorm",
+            "config-provider": "Boesing\\Laminas\\Migration\\PhpStorm\\ConfigProvider"
         }
     },
     "autoload": {

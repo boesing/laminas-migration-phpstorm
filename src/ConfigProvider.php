@@ -20,6 +20,12 @@ use PhpParser\ParserFactory;
 final class ConfigProvider
 {
 
+    /**
+     * @psalm-return array{
+     *     dependencies:array{factories:array<string,mixed>,aliases:array<string,string>},
+     *     laminas-cli:array{commands: array{'migration:phpstorm-extended-meta': Command\GenerateCommand::class}}
+     * }
+     */
     public function __invoke(): array
     {
         return [
