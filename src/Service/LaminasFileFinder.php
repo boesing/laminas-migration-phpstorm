@@ -55,12 +55,12 @@ final class LaminasFileFinder
     public function find(string $vendor): array
     {
         $composerJsonFinder = $this->createComposerJsonFinder($vendor);
-        $phpFileFinder = new Finder();
-        $phpFileFinder->name('*.php');
+        $phpFileFinder = $this->createPhpFileFinder();
 
         $found = false;
         foreach ($composerJsonFinder->files() as $composerJson) {
             assert($composerJson instanceof SplFileInfo);
+
             $directories = $this->parser->parse($composerJson);
             if (!$directories) {
                 continue;
@@ -77,6 +77,10 @@ final class LaminasFileFinder
         $files = [];
         foreach ($phpFileFinder->files() as $phpFile) {
             assert($phpFile instanceof SplFileInfo);
+            if ($phpFile->isLink()) {
+                continue;
+            }
+
             $fileName = $phpFile->getRealPath();
             if (!$fileName) {
                 continue;
@@ -137,5 +141,14 @@ final class LaminasFileFinder
         }
 
         return $directories;
+    }
+
+    private function createPhpFileFinder(): Finder
+    {
+        return (new Finder())
+            ->name('*.php')
+            ->ignoreVCS(true)
+            ->ignoreUnreadableDirs(true)
+            ->ignoreDotFiles(true);
     }
 }
