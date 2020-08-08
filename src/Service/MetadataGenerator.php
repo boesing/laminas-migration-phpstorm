@@ -1,18 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm\Service;
 
 use Boesing\Laminas\Migration\PhpStorm\Metadata;
-use Boesing\Laminas\Migration\PhpStorm\Service\LaminasFileFinder\File;
+
+use function sprintf;
 
 final class MetadataGenerator
 {
-
     /**
-     * @param array<int,File> $laminasFiles
-     *
-     * @psalm-param list<File> $laminasFiles
+     * @param array<int,LaminasFileFinder\File> $laminasFiles
+     * @psalm-param list<LaminasFileFinder\File> $laminasFiles
      */
     public function generateMetadata(array $laminasFiles): Metadata
     {

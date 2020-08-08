@@ -1,12 +1,19 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm\Service;
 
 use InvalidArgumentException;
 use Laminas\ZendFrameworkBridge\RewriteRules;
+
 use function array_flip;
+use function array_replace;
+use function explode;
+use function sprintf;
+use function strlen;
 use function strtr;
+use function substr;
 
 final class LaminasToZendNamespaceConverter implements LaminasToZendNamespaceConverterInterface
 {
@@ -14,7 +21,7 @@ final class LaminasToZendNamespaceConverter implements LaminasToZendNamespaceCon
     {
         /** @var array<string,string> $namespaces */
         $namespaces = RewriteRules::namespaceReverse();
-        $converted = $this->convert($className, array_replace(
+        $converted  = $this->convert($className, array_replace(
             $namespaces,
             ['Laminas\\ApiTools\\' => 'ZF\\Apigility\\']
         ));
@@ -38,7 +45,7 @@ final class LaminasToZendNamespaceConverter implements LaminasToZendNamespaceCon
     {
         $segments = explode('\\', $className);
 
-        $i = 0;
+        $i     = 0;
         $check = '';
 
         while (isset($segments[$i + 1], $namespaces[$check . $segments[$i] . '\\'])) {
@@ -56,8 +63,8 @@ final class LaminasToZendNamespaceConverter implements LaminasToZendNamespaceCon
         $legacy = $namespaces[$check]
             . strtr(substr($className, strlen($check)), [
                 'ApiTools' => 'Apigility',
-                'Mezzio' => 'Expressive',
-                'Laminas' => 'Zend',
+                'Mezzio'   => 'Expressive',
+                'Laminas'  => 'Zend',
             ]);
 
         if ($legacy !== $className) {

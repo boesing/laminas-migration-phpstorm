@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm\Service;
@@ -9,8 +10,10 @@ use Boesing\Laminas\Migration\PhpStorm\Service\LaminasFileFinder\File;
 use InvalidArgumentException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+
+use function assert;
 use function is_dir;
-use function is_string;
+use function sprintf;
 
 final class LaminasFileFinder
 {
@@ -20,19 +23,13 @@ final class LaminasFileFinder
         'mezzio',
     ];
 
-    /**
-     * @var ComposerJsonParserInterface
-     */
+    /** @var ComposerJsonParserInterface */
     private $parser;
 
-    /**
-     * @var ClassInterfaceTraitFinderInterface
-     */
+    /** @var ClassInterfaceTraitFinderInterface */
     private $classInterfaceTraitFinder;
 
-    /**
-     * @var LaminasToZendNamespaceConverterInterface
-     */
+    /** @var LaminasToZendNamespaceConverterInterface */
     private $laminasToZendNamespaceConverter;
 
     public function __construct(
@@ -40,29 +37,27 @@ final class LaminasFileFinder
         ClassInterfaceTraitFinderInterface $classInterfaceTraitFinder,
         LaminasToZendNamespaceConverterInterface $laminasToZendNamespaceConverter
     ) {
-        $this->parser = $composerJsonParser;
-        $this->classInterfaceTraitFinder = $classInterfaceTraitFinder;
+        $this->parser                          = $composerJsonParser;
+        $this->classInterfaceTraitFinder       = $classInterfaceTraitFinder;
         $this->laminasToZendNamespaceConverter = $laminasToZendNamespaceConverter;
     }
 
     /**
      * @psalm-param non-empty-string $vendor
-     *
      * @return File[]
-     *
      * @psalm-return list<File>
      */
     public function find(string $vendor): array
     {
         $composerJsonFinder = $this->createComposerJsonFinder($vendor);
-        $phpFileFinder = $this->createPhpFileFinder();
+        $phpFileFinder      = $this->createPhpFileFinder();
 
         $found = false;
         foreach ($composerJsonFinder->files() as $composerJson) {
             assert($composerJson instanceof SplFileInfo);
 
             $directories = $this->parser->parse($composerJson);
-            if (!$directories) {
+            if (! $directories) {
                 continue;
             }
 
@@ -70,7 +65,7 @@ final class LaminasFileFinder
             $found = true;
         }
 
-        if (!$found) {
+        if (! $found) {
             return [];
         }
 
@@ -82,7 +77,7 @@ final class LaminasFileFinder
             }
 
             $fileName = $phpFile->getRealPath();
-            if (!$fileName) {
+            if (! $fileName) {
                 continue;
             }
 
@@ -133,7 +128,7 @@ final class LaminasFileFinder
 
         foreach (self::VENDORS as $projectVendor) {
             $directory = sprintf('%s/%s', $vendorRootDirectory, $projectVendor);
-            if (!is_dir($directory)) {
+            if (! is_dir($directory)) {
                 continue;
             }
 

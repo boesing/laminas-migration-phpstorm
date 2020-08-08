@@ -1,20 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm\Service\LaminasFileFinder;
 
 use function ltrim;
+use function sprintf;
 
 final class File
 {
-    /**
-     * @var class-string|trait-string
-     */
+    /** @var class-string|trait-string */
     public $laminas;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $zend;
 
     /**
@@ -23,7 +21,7 @@ final class File
     private function __construct(string $laminas, string $zend)
     {
         $this->laminas = $this->prefixNamespace($laminas);
-        $this->zend = $zend;
+        $this->zend    = $zend;
     }
 
     /**
@@ -36,7 +34,6 @@ final class File
 
     /**
      * @psalm-param class-string|trait-string $classInterfaceOrTrait
-     *
      * @psalm-return class-string|trait-string
      * @psalm-suppress MoreSpecificReturnType
      */

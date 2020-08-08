@@ -1,24 +1,26 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm\Service\LaminasFileFinder;
 
-use Boesing\Laminas\Migration\PhpStorm\Service\LaminasFileFinder;
-use stdClass;
 use Symfony\Component\Finder\SplFileInfo;
+
 use function array_keys;
 use function array_map;
 use function array_merge;
+use function dirname;
 use function explode;
 use function in_array;
 use function is_string;
 use function json_decode;
-use function var_dump;
+use function sprintf;
+
 use const JSON_THROW_ON_ERROR;
 
 final class ComposerJsonParser implements ComposerJsonParserInterface
 {
-    private const VENDORS = [
+    private const VENDORS        = [
         'zfcampus',
         'zendframework',
     ];
@@ -47,7 +49,7 @@ final class ComposerJsonParser implements ComposerJsonParserInterface
 
         $replaces = $contents['replace'] ?? [];
 
-        if (!$this->packageReplacesZendPackage($replaces)) {
+        if (! $this->packageReplacesZendPackage($replaces)) {
             return [];
         }
 

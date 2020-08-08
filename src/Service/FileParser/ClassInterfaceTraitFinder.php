@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm\Service\FileParser;
@@ -12,13 +13,13 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\FindingVisitor;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
+
+use function assert;
 use function file_get_contents;
 
 final class ClassInterfaceTraitFinder implements ClassInterfaceTraitFinderInterface
 {
-    /**
-     * @var Parser
-     */
+    /** @var Parser */
     private $parser;
 
     public function __construct(Parser $parser)
@@ -40,7 +41,7 @@ final class ClassInterfaceTraitFinder implements ClassInterfaceTraitFinderInterf
             return [];
         }
 
-        $traverser = new NodeTraverser();
+        $traverser                 = new NodeTraverser();
         $classInterfaceTraitFinder = new FindingVisitor(static function (Node $node): bool {
             return $node instanceof Class_ || $node instanceof Interface_ || $node instanceof Trait_;
         });
@@ -59,7 +60,7 @@ final class ClassInterfaceTraitFinder implements ClassInterfaceTraitFinderInterf
              * @var Node\Name|null $namespacedName
              */
             $namespacedName = $node->namespacedName ?? null;
-            if (!$namespacedName instanceof Node\Name) {
+            if (! $namespacedName instanceof Node\Name) {
                 continue;
             }
 

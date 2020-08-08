@@ -1,10 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+
 use function implode;
 use function sprintf;
 
@@ -23,9 +25,7 @@ namespace PHPSTORM_META {
 }
 EOT;
 
-    /**
-     * @psalm-var list<string>
-     */
+    /** @psalm-var list<string> */
     private $aliases = [];
 
     private function __construct()
@@ -34,12 +34,12 @@ EOT;
 
     public static function create(): self
     {
-        return new self;
+        return new self();
     }
 
     public function withAlias(string $alias): self
     {
-        $instance = clone $this;
+        $instance            = clone $this;
         $instance->aliases[] = $alias;
 
         return $instance;

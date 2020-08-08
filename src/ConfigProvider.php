@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm;
@@ -19,7 +20,6 @@ use PhpParser\ParserFactory;
 
 final class ConfigProvider
 {
-
     /**
      * @psalm-return array{
      *     dependencies:array{factories:array<string,mixed>,aliases:array<string,string>},
@@ -30,7 +30,7 @@ final class ConfigProvider
     {
         return [
             'dependencies' => $this->getServiceDependencies(),
-            'laminas-cli' => $this->laminasCliConfiguration(),
+            'laminas-cli'  => $this->laminasCliConfiguration(),
         ];
     }
 
@@ -41,25 +41,25 @@ final class ConfigProvider
     {
         return [
             'factories' => [
-                ComposerJsonParser::class => static function (): ComposerJsonParser {
+                ComposerJsonParser::class              => static function (): ComposerJsonParser {
                     return new ComposerJsonParser();
                 },
-                ClassInterfaceTraitFinder::class => static function (): ClassInterfaceTraitFinder {
+                ClassInterfaceTraitFinder::class       => static function (): ClassInterfaceTraitFinder {
                     return new ClassInterfaceTraitFinder(
                         (new ParserFactory())->create(ParserFactory::PREFER_PHP7)
                     );
                 },
-                LaminasFileFinder::class => LaminasFileFinderFactory::class,
+                LaminasFileFinder::class               => LaminasFileFinderFactory::class,
                 LaminasToZendNamespaceConverter::class => LaminasToZendNamespaceConverterFactory::class,
-                MetadataGenerator::class => static function (): MetadataGenerator {
+                MetadataGenerator::class               => static function (): MetadataGenerator {
                     return new MetadataGenerator();
                 },
-                GenerateCommand::class => GenerateCommandFactory::class,
+                GenerateCommand::class                 => GenerateCommandFactory::class,
             ],
-            'aliases' => [
+            'aliases'   => [
                 LaminasToZendNamespaceConverterInterface::class => LaminasToZendNamespaceConverter::class,
-                ClassInterfaceTraitFinderInterface::class => ClassInterfaceTraitFinder::class,
-                ComposerJsonParserInterface::class => ComposerJsonParser::class,
+                ClassInterfaceTraitFinderInterface::class       => ClassInterfaceTraitFinder::class,
+                ComposerJsonParserInterface::class              => ComposerJsonParser::class,
             ],
         ];
     }

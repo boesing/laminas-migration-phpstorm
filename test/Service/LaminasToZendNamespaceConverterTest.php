@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm\Test\Service;
@@ -9,9 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class LaminasToZendNamespaceConverterTest extends TestCase
 {
-    /**
-     * @var LaminasToZendNamespaceConverter
-     */
+    /** @var LaminasToZendNamespaceConverter */
     private $converter;
 
     /**

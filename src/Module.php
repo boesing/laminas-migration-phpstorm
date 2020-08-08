@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Boesing\Laminas\Migration\PhpStorm;
@@ -13,7 +14,7 @@ final class Module
      */
     public function getConfig(): array
     {
-        $config = (new ConfigProvider())->__invoke();
+        $config                    = (new ConfigProvider())->__invoke();
         $config['service_manager'] = $config['dependencies'];
         unset($config['dependencies']);
 
