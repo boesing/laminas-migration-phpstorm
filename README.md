@@ -1,6 +1,6 @@
 # PHPStorm META informations for migrated zendframework libraries
 
-This tool can create a phpstorm meta information with all used `laminas`, `mezzio` or `api-tools` aliases.
+This tool can create a [phpstorm meta](https://www.jetbrains.com/help/phpstorm/ide-advanced-metadata.html) information with all used `laminas`, `mezzio` or `api-tools` aliases.
 
 
 ## Installation
