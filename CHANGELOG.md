@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#1](https://github.com/boesing/laminas-migration-phpstorm/pull/1) Generated Metadata zend-namespaces did not contain namespace prefix
 
 ## 0.1.0 - 2020-08-08
 
