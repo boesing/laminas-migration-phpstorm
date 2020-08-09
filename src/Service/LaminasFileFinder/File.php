@@ -20,8 +20,8 @@ final class File
      */
     private function __construct(string $laminas, string $zend)
     {
-        $this->laminas = $this->prefixNamespace($laminas);
-        $this->zend    = $zend;
+        $this->laminas = $this->prefix($laminas);
+        $this->zend    = $this->prefix($zend);
     }
 
     /**
@@ -37,9 +37,9 @@ final class File
      * @psalm-return class-string|trait-string
      * @psalm-suppress MoreSpecificReturnType
      */
-    private function prefixNamespace(string $classInterfaceOrTrait): string
+    private function prefix(string $string): string
     {
         /** @psalm-suppress LessSpecificReturnStatement */
-        return sprintf('\\%s', ltrim($classInterfaceOrTrait, '\\'));
+        return sprintf('\\%s', ltrim($string, '\\'));
     }
 }
